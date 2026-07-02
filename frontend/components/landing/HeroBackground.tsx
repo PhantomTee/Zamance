@@ -1,33 +1,25 @@
 /**
- * The original spec pointed at a CloudFront URL that belongs to a different
- * product's demo video, not Zamance - so it's deliberately not hardcoded
- * here. Set NEXT_PUBLIC_HERO_VIDEO_URL to a real Zamance-branded video to
- * enable the same full-bleed looping background; until then this renders a
- * gradient in the same palette so the hero still looks intentional.
+ * Demo placeholder from the original design spec - this footage belongs to
+ * a different, unrelated product. Fine for a demo per explicit direction;
+ * swap for a real Zamance-branded clip before any real launch by setting
+ * NEXT_PUBLIC_HERO_VIDEO_URL, which overrides this default.
  */
+const DEMO_VIDEO_URL =
+  "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_131516_eca35265-ea66-4fbd-8d52-22aae6e1a503.mp4";
+
 export function HeroBackground() {
-  const videoUrl = process.env.NEXT_PUBLIC_HERO_VIDEO_URL;
+  const videoUrl = process.env.NEXT_PUBLIC_HERO_VIDEO_URL || DEMO_VIDEO_URL;
 
   return (
     <div className="absolute inset-0 z-0 h-full w-full overflow-hidden">
-      {videoUrl ? (
-        <video
-          className="absolute inset-0 z-0 h-full w-full object-cover"
-          src={videoUrl}
-          autoPlay
-          muted
-          loop
-          playsInline
-        />
-      ) : (
-        <div
-          className="absolute inset-0 z-0 h-full w-full"
-          style={{
-            background:
-              "radial-gradient(circle at 20% 15%, rgba(115,66,226,0.16), transparent 55%), radial-gradient(circle at 85% 30%, rgba(115,66,226,0.12), transparent 50%), #F2F2EE",
-          }}
-        />
-      )}
+      <video
+        className="absolute inset-0 z-0 h-full w-full object-cover"
+        src={videoUrl}
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
     </div>
   );
 }

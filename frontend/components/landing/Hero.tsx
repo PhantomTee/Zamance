@@ -1,18 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRightCircle, Zap, LockKeyhole, Fingerprint } from "lucide-react";
+import { ArrowRightCircle } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
 import { SLACK_INSTALL_URL } from "@/lib/config";
-
-const iconStyle: React.CSSProperties = {
-  color: "#192837",
-  display: "inline",
-  verticalAlign: "middle",
-  position: "relative",
-  top: -2,
-  margin: "0 4px",
-};
 
 export function Hero() {
   return (
@@ -35,12 +26,9 @@ export function Hero() {
             color: "var(--color-text)",
           }}
         >
-          <span style={{ whiteSpace: "nowrap" }}>
-            Pay Your Team <Zap size={24} style={iconStyle} /> Privately{" "}
-            <LockKeyhole size={24} style={iconStyle} />
-          </span>
+          Pay Your Team, Privately
           <br />
-          Encrypted On-Chain <Fingerprint size={24} style={{ ...iconStyle, marginLeft: 6 }} />
+          Encrypted On-Chain
         </motion.h1>
 
         <motion.p
