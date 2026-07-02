@@ -1,5 +1,8 @@
 # Zamance
 
+**Live:** https://zamance.vercel.app (frontend only for now - see "Run the bot
+backend" below; the dashboard needs a deployed `bot/` host to be functional).
+
 A Slack-first bot for processing team payments privately on Ethereum Sepolia,
 with a public dashboard (like the bot dashboards you'd see for Discord bots).
 Amounts are encrypted on-chain via a Zama FHEVM confidential ERC-7984 token;
