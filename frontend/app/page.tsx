@@ -19,7 +19,7 @@ const FEATURES = [
 ];
 
 const STEPS = [
-  { title: "Add Zamance to Slack", body: "Install via OAuth - each workspace gets its own isolated installation." },
+  { title: "Sign in with Slack", body: "Installs automatically if your workspace hasn't added Zamance yet - one continuous flow, each workspace fully isolated." },
   {
     title: "Connect your treasury",
     body: "Create a Safe, add Zamance as a co-signing owner, then connect it from the dashboard - no token to deploy, Zamance pays out in real Sepolia USDC.",

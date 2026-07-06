@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { NAV_LINKS } from "./navLinks";
-import { SLACK_INSTALL_URL, SLACK_LOGIN_URL } from "@/lib/config";
+import { SLACK_LOGIN_URL } from "@/lib/config";
 
 export function MobileMenu({
   open,
@@ -79,18 +79,11 @@ export function MobileMenu({
 
             <div className="flex flex-col gap-3 px-6 pb-8">
               <a
-                href={SLACK_INSTALL_URL}
+                href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
                 className="rounded-full py-3.5 text-center font-semibold text-white"
                 style={{ background: "#7342E2", fontSize: "0.95rem" }}
               >
-                Add to Slack
-              </a>
-              <a
-                href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
-                className="rounded-full py-3.5 text-center font-semibold"
-                style={{ background: "var(--color-login-bg)", color: "var(--color-text)", fontSize: "0.95rem" }}
-              >
-                {isSignedIn ? "Dashboard" : "Sign In"}
+                {isSignedIn ? "Dashboard" : "Sign in with Slack"}
               </a>
             </div>
           </motion.div>

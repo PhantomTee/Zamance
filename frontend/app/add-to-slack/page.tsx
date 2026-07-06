@@ -1,9 +1,9 @@
 import { AppShell } from "@/components/AppShell";
 import { SlackButton } from "@/components/SlackButton";
-import { SLACK_INSTALL_URL } from "@/lib/config";
+import { SLACK_LOGIN_URL } from "@/lib/config";
 
 const REQUIREMENTS = [
-  "A workspace admin to approve the install (Zamance requests commands, chat:write, im:write, users:read).",
+  "A workspace admin to approve the install the first time you sign in (Zamance requests commands, chat:write, im:write, users:read).",
   "A Gnosis Safe (2-of-N or higher) with Zamance added as one co-signing owner - no token to deploy, payouts move real Sepolia USDC.",
   "Some Sepolia testnet USDC in the Safe (e.g. from Circle's faucet) before running private or public payouts.",
 ];
@@ -12,18 +12,20 @@ export default function AddToSlackPage() {
   return (
     <AppShell>
     <main className="mx-auto max-w-2xl flex-1 px-6 py-20 text-center">
-      <h1 className="text-3xl font-semibold tracking-tight">Add Zamance to your Slack</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">Sign in to add Zamance</h1>
       <p className="mt-4 text-foreground/70">
-        Installing gives your workspace its own isolated Zamance install - a separate database
-        row, a separate treasury, no data shared with any other team.
+        There&apos;s no separate install step - sign in with Slack, and if your workspace hasn&apos;t
+        added Zamance yet, you&apos;ll be walked through the OAuth install automatically, then
+        dropped straight into your dashboard. Every workspace gets its own isolated install - a
+        separate database row, a separate treasury, no data shared with any other team.
       </p>
 
       <div className="mt-10 flex justify-center">
-        <SlackButton href={SLACK_INSTALL_URL} />
+        <SlackButton href={SLACK_LOGIN_URL} label="Sign in with Slack" />
       </div>
 
       <div className="panel mt-16 rounded-2xl p-6 text-left">
-        <h2 className="font-semibold">Before you install, you&apos;ll need:</h2>
+        <h2 className="font-semibold">Before you sign in, you&apos;ll need:</h2>
         <ul className="mt-4 space-y-3 text-sm text-foreground/70">
           {REQUIREMENTS.map((r) => (
             <li key={r} className="flex gap-3">

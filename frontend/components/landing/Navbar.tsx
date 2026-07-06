@@ -5,7 +5,7 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "./MobileMenu";
 import { NAV_LINKS } from "./navLinks";
-import { SLACK_INSTALL_URL, SLACK_LOGIN_URL } from "@/lib/config";
+import { SLACK_LOGIN_URL } from "@/lib/config";
 import { useSession } from "@/lib/useSession";
 
 export function Navbar() {
@@ -36,18 +36,11 @@ export function Navbar() {
 
           <div className="hidden items-center gap-3 md:flex">
             <a
-              href={SLACK_INSTALL_URL}
+              href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
               className="rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:shadow-lg active:scale-95"
               style={{ background: "#7342E2" }}
             >
-              Add to Slack
-            </a>
-            <a
-              href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
-              className="rounded-full px-5 py-2.5 text-sm font-semibold transition hover:shadow-lg active:scale-95"
-              style={{ background: "var(--color-login-bg)", color: "var(--color-text)" }}
-            >
-              {isSignedIn ? "Dashboard" : "Sign In"}
+              {isSignedIn ? "Dashboard" : "Sign in with Slack"}
             </a>
           </div>
 

@@ -11,7 +11,7 @@ const COMMANDS = [
 ];
 
 const STEPS = [
-  { title: "Add Zamance to Slack", body: "Real OAuth install - each workspace gets its own isolated data." },
+  { title: "Sign in with Slack", body: "Installs automatically on first sign-in if your workspace hasn't added Zamance yet - each workspace gets its own isolated data." },
   { title: "Create a Safe", body: "At app.safe.global - add Zamance's bot signer address (shown on the dashboard) as an owner, threshold >= 2-of-N." },
   { title: "Connect it", body: "Sign in to the dashboard and connect your Safe address there - admin only, nothing to deploy." },
   { title: "Get testnet USDC", body: "Send the Safe some real Sepolia USDC, e.g. from Circle's faucet." },

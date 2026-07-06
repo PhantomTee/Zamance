@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
 * {
@@ -8,6 +8,10 @@
 :root {
   --font-heading: "Helvetica Now Display Bold", sans-serif;
   --font-body: "Inter", sans-serif;
+  /* Addresses, tx hashes, and other data readouts - a deliberate ledger/statement feel instead
+     of the system monospace fallback, matched to Zamance's "here's proof, not just a promise"
+     positioning around encrypted amounts. */
+  --font-data: "IBM Plex Mono", ui-monospace, monospace;
 
   /* One palette, used everywhere - landing, docs, dashboard alike. */
   --color-text: #192837;

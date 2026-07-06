@@ -3,10 +3,14 @@
 import { motion } from "framer-motion";
 import { ArrowRightCircle } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
-import { SLACK_INSTALL_URL } from "@/lib/config";
+import { SLACK_LOGIN_URL } from "@/lib/config";
+import { useSession } from "@/lib/useSession";
 import { RotatingHeadline } from "./RotatingHeadline";
 
 export function Hero() {
+  const { token } = useSession();
+  const isSignedIn = Boolean(token);
+
   return (
     <section
       className="relative z-10 mx-auto"
@@ -51,7 +55,7 @@ export function Hero() {
         </motion.p>
 
         <motion.a
-          href={SLACK_INSTALL_URL}
+          href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
           custom={2}
           variants={fadeUp}
           initial="hidden"
@@ -71,9 +75,15 @@ export function Hero() {
             gap: 32,
           }}
         >
-          Add to Slack
+          {isSignedIn ? "Go to dashboard" : "Sign in with Slack"}
           <ArrowRightCircle size={20} />
         </motion.a>
+        <p
+          className="text-center"
+          style={{ marginTop: 14, fontSize: "0.8rem", color: "var(--color-text)", opacity: 0.55 }}
+        >
+          New to Zamance? Signing in installs it to your workspace automatically.
+        </p>
       </div>
     </section>
   );
