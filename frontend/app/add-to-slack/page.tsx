@@ -34,8 +34,12 @@ export default function AddToSlackPage() {
         </ul>
         <p className="mt-6 text-sm text-foreground/50">
           Zamance never deploys a Safe on your behalf - your team keeps full control over its own
-          on-chain treasury. Once installed, run <code>/setup-treasury</code> in Slack to connect
-          it.
+          on-chain treasury. Once installed, sign in to the{" "}
+          <a href="/dashboard" className="underline">
+            dashboard
+          </a>{" "}
+          to connect it and (if you want private payouts) shield some USDC into privacy - Slack is
+          just for running payouts.
         </p>
       </div>
     </main>

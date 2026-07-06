@@ -24,6 +24,15 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
+  const [safeInput, setSafeInput] = useState("");
+  const [connecting, setConnecting] = useState(false);
+  const [connectError, setConnectError] = useState<string | null>(null);
+
+  const [fundAmount, setFundAmount] = useState("");
+  const [funding, setFunding] = useState(false);
+  const [fundError, setFundError] = useState<string | null>(null);
+  const [fundTxHash, setFundTxHash] = useState<string | null>(null);
+
   function copyBotAddress() {
     if (!team?.botSignerAddress) return;
     navigator.clipboard.writeText(team.botSignerAddress).then(() => {
@@ -32,7 +41,7 @@ export default function DashboardPage() {
     });
   }
 
-  useEffect(() => {
+  function loadDashboard() {
     if (!token) return;
     setLoading(true);
     setError(null);
@@ -51,7 +60,40 @@ export default function DashboardPage() {
         }
       })
       .finally(() => setLoading(false));
-  }, [token, clear]);
+  }
+
+  useEffect(loadDashboard, [token, clear]);
+
+  async function connectTreasury() {
+    if (!token || !safeInput.trim()) return;
+    setConnecting(true);
+    setConnectError(null);
+    try {
+      await api.connectTreasury(token, safeInput.trim());
+      setSafeInput("");
+      loadDashboard();
+    } catch (err) {
+      setConnectError(err instanceof ApiError ? err.message : "Could not connect the treasury.");
+    } finally {
+      setConnecting(false);
+    }
+  }
+
+  async function fundTreasury() {
+    if (!token || !fundAmount.trim()) return;
+    setFunding(true);
+    setFundError(null);
+    setFundTxHash(null);
+    try {
+      const { safeTxHash } = await api.fundTreasury(token, fundAmount.trim());
+      setFundTxHash(safeTxHash);
+      setFundAmount("");
+    } catch (err) {
+      setFundError(err instanceof ApiError ? err.message : "Could not propose the wrap transaction.");
+    } finally {
+      setFunding(false);
+    }
+  }
 
   if (!token) {
     return (
@@ -96,7 +138,7 @@ export default function DashboardPage() {
           </p>
           <p className="mt-2 text-sm text-foreground/70">
             Add this address as a co-signing owner on your Safe (threshold 2-of-N or higher) before
-            running <code>/setup-treasury</code>.
+            connecting it below.
           </p>
           <div className="mt-3 flex items-center gap-2">
             <code className="flex-1 overflow-x-auto rounded-lg bg-muted/60 px-3 py-2 text-sm">
@@ -122,11 +164,66 @@ export default function DashboardPage() {
       )}
 
       {team && !team.treasuryConfigured && (
-        <p className="panel mt-6 rounded-lg p-4 text-sm text-foreground/70">
-          Run <code>/setup-treasury &lt;safeAddress&gt;</code> in Slack to connect your
-          team&apos;s Safe - payouts move real Sepolia USDC, either as a plain transfer or
-          privately through the shared confidential wrapper.
-        </p>
+        <div className="panel mt-6 rounded-2xl p-5">
+          <p className="text-sm font-medium">Connect your Safe</p>
+          <p className="mt-1 text-sm text-foreground/70">
+            Workspace admins only. Payouts move real Sepolia USDC, either as a plain transfer or
+            privately through the shared confidential wrapper - there&apos;s no token to deploy.
+          </p>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              value={safeInput}
+              onChange={(e) => setSafeInput(e.target.value)}
+              placeholder="0xYourSafeAddress"
+              className="flex-1 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm font-mono"
+            />
+            <button
+              onClick={connectTreasury}
+              disabled={connecting || !safeInput.trim()}
+              className="rounded-lg px-5 py-2 text-sm font-semibold text-white transition disabled:opacity-50"
+              style={{ background: "#7342E2" }}
+            >
+              {connecting ? "Connecting..." : "Connect Safe"}
+            </button>
+          </div>
+          {connectError && <p className="mt-2 text-sm text-red-600">{connectError}</p>}
+        </div>
+      )}
+
+      {team && team.treasuryConfigured && (
+        <div className="panel mt-6 rounded-2xl p-5">
+          <p className="text-sm font-medium">Fund the confidential balance</p>
+          <p className="mt-1 text-sm text-foreground/70">
+            Registered Safe owners only. Shields this much of the Safe&apos;s real USDC into its
+            confidential balance, so private payouts have encrypted balance to draw from. The Safe
+            must already hold at least this much real Sepolia USDC. A second Safe owner still has to
+            sign and execute the resulting transaction in Safe{"{"}Wallet{"}"}.
+          </p>
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              value={fundAmount}
+              onChange={(e) => setFundAmount(e.target.value)}
+              placeholder="Amount (USDC base units)"
+              inputMode="numeric"
+              className="flex-1 rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm"
+            />
+            <button
+              onClick={fundTreasury}
+              disabled={funding || !fundAmount.trim()}
+              className="rounded-lg px-5 py-2 text-sm font-semibold text-white transition disabled:opacity-50"
+              style={{ background: "#7342E2" }}
+            >
+              {funding ? "Proposing..." : "Shield into privacy"}
+            </button>
+          </div>
+          {fundError && <p className="mt-2 text-sm text-red-600">{fundError}</p>}
+          {fundTxHash && (
+            <p className="mt-2 text-sm text-foreground/70">
+              Proposed - tx <code className="text-xs">{short(fundTxHash)}</code>. Sign and execute it
+              in Safe{"{"}Wallet{"}"} to complete the shield.
+            </p>
+          )}
+        </div>
       )}
 
       <section className="mt-10">

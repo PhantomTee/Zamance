@@ -131,7 +131,8 @@ export default function BalancePage() {
                 {status === "done" && empty && (
                   <p className="text-sm text-foreground/70">
                     You have no confidential balance yet - it&apos;s only created the first time you
-                    receive a private payout, or shield USDC via <code>/fund-treasury</code>.
+                    receive a private payout, or your team shields USDC into privacy from the
+                    dashboard.
                   </p>
                 )}
 

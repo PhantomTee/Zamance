@@ -88,7 +88,8 @@ export function buildApproveCall(
  * Builds a MetaTransactionData call to ConfidentialUSDCWrapper.wrap(to, amount) - pulls `amount`
  * of real USDC from msg.sender (the Safe) and mints a confidential balance to `to`. `amount` is
  * plaintext on-chain calldata (wrap() has no encrypted-amount overload), so this is a visible
- * treasury-funding step, not a private per-payout call - see /fund-treasury.
+ * treasury-funding step, not a private per-payout call - see the dashboard's "fund treasury"
+ * action (bot/src/http/routes.ts's POST /api/team/fund).
  */
 export function buildWrapCall(
   wrapperAddress: string,

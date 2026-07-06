@@ -1,7 +1,8 @@
 /**
  * @file token.ts
  * @description Every team shares two global, protocol-level contracts on Sepolia (not something
- * a team deploys or configures via /setup-treasury): Circle's real USDC, and one
+ * a team deploys or configures - only the Safe address is per-team, connected via the dashboard):
+ * Circle's real USDC, and one
  * ConfidentialUSDCWrapper wrapping it. A payout either moves real USDC directly (public,
  * transparent) or moves the Safe's already-wrapped confidential balance via the wrapper's
  * confidentialTransfer (private, encrypted) - see chain/safe.ts for the call builders and

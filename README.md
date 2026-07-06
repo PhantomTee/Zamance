@@ -20,8 +20,12 @@ Zamance is multi-tenant: any Slack workspace can install it via OAuth
 ("Add to Slack"), and each installation is fully isolated - its own DB rows,
 its own treasury (just a Safe), its own dashboard login. Zamance does not
 (and cannot) deploy a Safe on a team's behalf; a team admin creates their own
-Safe and connects it with `/setup-treasury`. The USDC contract and the
-confidential wrapper are shared, protocol-level constants (`USDC_ADDRESS` /
+Safe and connects it from the **dashboard**, not Slack - treasury setup and
+funding are website actions (`POST /api/team/treasury`, `POST /api/team/fund`),
+kept off Slack entirely so Slack only ever handles the actual payout
+mechanics (`/payout`, `/payroll`, `/register-wallet`, `/payout-status`, and
+the natural-language DM flow). The USDC contract and the confidential
+wrapper are shared, protocol-level constants (`USDC_ADDRESS` /
 `WRAPPER_ADDRESS`) - not something each team deploys, since balances inside
 the wrapper are already isolated per-Safe-address.
 
@@ -49,9 +53,6 @@ features:
     - command: /register-wallet
       description: Register your Sepolia payout address
       usage_hint: "0x..."
-    - command: /setup-treasury
-      description: Connect your team's Safe (admin only)
-      usage_hint: "<safeAddress>"
     - command: /payout
       description: Propose a single payout (toggle private/public in the modal)
     - command: /payroll
@@ -59,9 +60,6 @@ features:
     - command: /payout-status
       description: Check a payout or payroll run's status
       usage_hint: "<id>"
-    - command: /fund-treasury
-      description: Shield some of the Safe's real USDC into its confidential balance (owners only)
-      usage_hint: "<amount>"
 oauth_config:
   redirect_urls:
     - https://<your-bot-host>/slack/oauth_redirect
@@ -128,30 +126,39 @@ npm run dev
 
 ## 4. Per-team onboarding (what an installing team actually does)
 
+Treasury setup and funding happen on the **dashboard** (signed in via "Sign in
+with Slack"), not as Slack commands - Slack is only for running payouts.
+
 1. Click **Add to Slack** on the Zamance site (real OAuth install).
-2. Create a Safe at https://app.safe.global (Sepolia), add Zamance's bot
-   address (shown in the dashboard, or ask an admin to run `/setup-treasury`
-   once with a placeholder to see the expected address in the error
-   message) as an owner, threshold >= 2-of-N.
-3. In Slack, run `/setup-treasury <safeAddress>` (workspace admin only).
-   There's no token to deploy - every team pays out in real Sepolia USDC
-   (`USDC_ADDRESS`) plus the one shared `ConfidentialUSDCWrapper`
-   (`WRAPPER_ADDRESS`), both protocol-level constants the bot already knows.
+2. Sign in to the dashboard. It shows Zamance's bot signer address (with a
+   copy button) - create a Safe at https://app.safe.global (Sepolia) and add
+   that address as an owner, threshold >= 2-of-N.
+3. Back on the dashboard, paste the Safe address into **Connect your Safe**
+   (workspace admin only - checked server-side via the Slack API, same rule
+   as the old `/setup-treasury` command). There's no token to deploy - every
+   team pays out in real Sepolia USDC (`USDC_ADDRESS`) plus the one shared
+   `ConfidentialUSDCWrapper` (`WRAPPER_ADDRESS`), both protocol-level
+   constants the bot already knows.
 4. Get the Safe some real Sepolia USDC (e.g. Circle's faucet at
    https://faucet.circle.com, network "Ethereum Sepolia").
-5. `/fund-treasury <amount>` to shield part of that USDC into the Safe's
-   confidential balance, then sign + execute the wrap in Safe{Wallet}. Only
-   needed if you plan to send private payouts - public payouts spend the
-   Safe's plain USDC balance directly and need no wrapping step.
-6. Everyone who sends or receives payouts runs `/register-wallet 0x...`
-   once - including the Safe owners themselves (Zamance resolves Safe
+5. On the dashboard, use **Fund the confidential balance** (registered Safe
+   owners only) to shield part of that USDC into the Safe's confidential
+   balance, then sign + execute the resulting wrap transaction in
+   Safe{Wallet}. Only needed if you plan to send private payouts - public
+   payouts spend the Safe's plain USDC balance directly and need no wrapping
+   step.
+6. Everyone who sends or receives payouts runs `/register-wallet 0x...` once
+   in Slack - including the Safe owners themselves (Zamance resolves Safe
    owner addresses back to Slack IDs via this table to know who to DM for
-   approvals).
+   approvals, and to check who's allowed to use the dashboard's funding
+   action).
+7. From here on, payouts happen in Slack: `/payout`, `/payroll`, or DM the
+   bot in natural language ("pay Sarah 500").
 
 ## Verification (end-to-end on Sepolia)
 
 1. Install via the real "Add to Slack" OAuth flow into a test workspace.
-2. Complete onboarding steps 2-6 above with two test Slack accounts.
+2. Complete onboarding steps 2-7 above with two test Slack accounts.
 3. `/payout @testuser 10` with **Private** selected - confirm all responses
    are ephemeral/DM only, never posted to a channel.
 4. Sign the proposed transaction with the second Safe owner in Safe{Wallet}.
@@ -171,6 +178,11 @@ npm run dev
 9. In a DM to the bot, try "pay @testuser 5" (should default to private) and
    "pay @testuser 5 publicly" (should go public) - confirm the confirmation
    message states the correct visibility before you click Confirm.
+10. Sign in as a non-admin, non-owner Slack member and confirm both
+    **Connect your Safe** and **Fund the confidential balance** reject the
+    request with a clear error - the dashboard enforces the same admin/owner
+    checks the old Slack commands did, just against the signed-in session
+    instead of `command.user_id`.
 
 ## Security notes
 

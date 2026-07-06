@@ -17,12 +17,6 @@
         "should_escape": false
       },
       {
-        "command": "/setup-treasury",
-        "description": "Connect your team's Safe (admin only)",
-        "usage_hint": "<safeAddress>",
-        "should_escape": false
-      },
-      {
         "command": "/payout",
         "description": "Propose a single payout - toggle private/public in the modal",
         "should_escape": false
@@ -36,12 +30,6 @@
         "command": "/payout-status",
         "description": "Check a payout or payroll run's status",
         "usage_hint": "<id>",
-        "should_escape": false
-      },
-      {
-        "command": "/fund-treasury",
-        "description": "Shield real USDC into the Safe's confidential balance (owners only)",
-        "usage_hint": "<amount>",
         "should_escape": false
       }
     ]

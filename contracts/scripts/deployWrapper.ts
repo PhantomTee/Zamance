@@ -4,7 +4,7 @@
  * real ERC20 (Circle's Sepolia USDC by default); every team's Safe uses this same wrapper address,
  * since confidential balances inside it are already isolated per-holder-address. Set the resulting
  * address as WRAPPER_ADDRESS in the bot's env - it is a protocol-level constant, not something
- * teams configure via /setup-treasury.
+ * teams configure themselves (they only ever connect a Safe address, via the dashboard).
  */
 
 import { ethers, network, artifacts, run } from "hardhat";

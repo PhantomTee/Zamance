@@ -5,19 +5,17 @@ export const metadata: Metadata = { title: "Docs - Zamance" };
 
 const COMMANDS = [
   { cmd: "/register-wallet <address>", body: "Registers your Sepolia payout address. Everyone who sends or receives a payout runs this once, including Safe owners." },
-  { cmd: "/setup-treasury <safeAddress>", body: "Workspace admin only. Connects your team's already-created Safe - USDC and the confidential wrapper are shared constants, nothing to deploy." },
   { cmd: "/payout", body: "Opens a modal to propose a single payout, with a Private/Public toggle (private by default)." },
   { cmd: "/payroll", body: "Opens a modal for a batch payroll run with the same toggle, bundled into one atomic Safe transaction." },
-  { cmd: "/fund-treasury <amount>", body: "Safe owners only. Shields that much of the Safe's real USDC into its confidential balance." },
   { cmd: "/payout-status <id>", body: "Ephemeral status lookup for a payout or payroll run." },
 ];
 
 const STEPS = [
   { title: "Add Zamance to Slack", body: "Real OAuth install - each workspace gets its own isolated data." },
-  { title: "Create a Safe", body: "At app.safe.global - add Zamance's bot signer address as an owner, threshold >= 2-of-N." },
-  { title: "Connect it", body: "Run /setup-treasury <safeAddress> in Slack." },
+  { title: "Create a Safe", body: "At app.safe.global - add Zamance's bot signer address (shown on the dashboard) as an owner, threshold >= 2-of-N." },
+  { title: "Connect it", body: "Sign in to the dashboard and connect your Safe address there - admin only, nothing to deploy." },
   { title: "Get testnet USDC", body: "Send the Safe some real Sepolia USDC, e.g. from Circle's faucet." },
-  { title: "Shield and pay", body: "/fund-treasury to shield part of it for private payouts, then /payout or /payroll - toggle Private or Public per run." },
+  { title: "Shield and pay", body: "From the dashboard, shield part of it for private payouts. Then use /payout or /payroll in Slack - toggle Private or Public per run." },
 ];
 
 export default function DocsPage() {

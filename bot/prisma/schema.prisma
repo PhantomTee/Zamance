@@ -9,9 +9,10 @@ generator client {
 
 // One row per Slack workspace that has installed Zamance. Doubles as the Slack Bolt
 // InstallationStore backing table (see src/slack/installationStore.ts) and as the per-team
-// treasury config. safeAddress is nullable because a team must run /setup-treasury after
-// installing - Zamance cannot auto-deploy a Safe for them (that requires their own gas-funded
-// key and their own on-chain deployment choices). There is deliberately no tokenAddress column:
+// treasury config. safeAddress is nullable because a team must connect a Safe from the
+// dashboard after installing - Zamance cannot auto-deploy a Safe for them (that requires their
+// own gas-funded key and their own on-chain deployment choices). There is deliberately no
+// tokenAddress column:
 // every team pays out in real Sepolia USDC plus one globally shared ConfidentialUSDCWrapper
 // (WRAPPER_ADDRESS env var) - those are protocol-level constants, not per-team deployments.
 model Team {

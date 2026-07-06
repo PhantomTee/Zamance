@@ -14,8 +14,6 @@ import { handleRegisterWallet } from "./slack/commands/registerWallet";
 import { openPayoutModal, handlePayoutSubmission, PAYOUT_CALLBACK_ID } from "./slack/commands/payout";
 import { openPayrollModal, handlePayrollSubmission, PAYROLL_CALLBACK_ID } from "./slack/commands/payroll";
 import { handlePayoutStatus } from "./slack/commands/payoutStatus";
-import { handleFundTreasury } from "./slack/commands/fundTreasury";
-import { handleSetupTreasury } from "./slack/commands/setupTreasury";
 import {
   handleNaturalLanguageMessage,
   handleNlPayoutConfirm,
@@ -58,8 +56,6 @@ app.command("/register-wallet", handleRegisterWallet);
 app.command("/payout", openPayoutModal);
 app.command("/payroll", openPayrollModal);
 app.command("/payout-status", handlePayoutStatus);
-app.command("/fund-treasury", handleFundTreasury);
-app.command("/setup-treasury", handleSetupTreasury);
 
 app.view(PAYOUT_CALLBACK_ID, handlePayoutSubmission);
 app.view(PAYROLL_CALLBACK_ID, handlePayrollSubmission);

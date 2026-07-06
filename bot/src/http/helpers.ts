@@ -16,7 +16,7 @@ function dashboardOrigin(): string {
 export function withCors(res: ServerResponse): void {
   res.setHeader("Access-Control-Allow-Origin", dashboardOrigin());
   res.setHeader("Access-Control-Allow-Headers", "authorization, content-type");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
 }
 
 export function sendJson(res: ServerResponse, status: number, body: unknown): void {
@@ -33,6 +33,22 @@ export function handlePreflight(res: ServerResponse): void {
 
 export function getQuery(req: ParamsIncomingMessage): URLSearchParams {
   return new URL(req.url ?? "/", "http://internal").searchParams;
+}
+
+/** Reads and JSON-parses a POST body from Bolt's raw CustomRoute request stream. */
+export function readJsonBody<T>(req: ParamsIncomingMessage): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    req.on("data", (chunk: Buffer) => chunks.push(chunk));
+    req.on("end", () => {
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}") as T);
+      } catch (err) {
+        reject(err instanceof Error ? err : new Error(String(err)));
+      }
+    });
+    req.on("error", reject);
+  });
 }
 
 export function requireSession(req: ParamsIncomingMessage, res: ServerResponse): DashboardSession | null {

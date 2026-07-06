@@ -1,9 +1,12 @@
 /**
  * @file teamConfig.ts
  * @description Shared helper every payout-moving command uses to load a team's treasury config,
- * with a consistent "not set up yet" message pointing at /setup-treasury. A team only needs a
- * Safe address - the underlying USDC and the shared ConfidentialUSDCWrapper are global,
- * protocol-level constants (USDC_ADDRESS / WRAPPER_ADDRESS env vars), not per-team choices.
+ * with a consistent "not set up yet" message pointing at the dashboard - treasury connection and
+ * funding are website actions (see bot/src/http/routes.ts's /api/team/treasury and /api/team/fund),
+ * not Slack commands, so an admin who hasn't connected a Safe yet needs to be pointed there instead
+ * of at a slash command. A team only needs a Safe address - the underlying USDC and the shared
+ * ConfidentialUSDCWrapper are global, protocol-level constants (USDC_ADDRESS / WRAPPER_ADDRESS env
+ * vars), not per-team choices.
  */
 
 import { getTeam } from "../db/repository";
@@ -19,4 +22,4 @@ export async function requireTeamTreasury(teamId: string): Promise<TeamTreasury 
 }
 
 export const TREASURY_NOT_CONFIGURED_MESSAGE =
-  "This workspace hasn't configured a treasury yet. An admin needs to run /setup-treasury <safeAddress> first.";
+  "This workspace hasn't connected a treasury yet. An admin needs to sign in to the Zamance dashboard and connect a Safe first.";

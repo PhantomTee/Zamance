@@ -22,7 +22,7 @@ const STEPS = [
   { title: "Add Zamance to Slack", body: "Install via OAuth - each workspace gets its own isolated installation." },
   {
     title: "Connect your treasury",
-    body: "Create a Safe, add Zamance as a co-signing owner, then run /setup-treasury - no token to deploy, Zamance pays out in real Sepolia USDC.",
+    body: "Create a Safe, add Zamance as a co-signing owner, then connect it from the dashboard - no token to deploy, Zamance pays out in real Sepolia USDC.",
   },
   { title: "Pay your team", body: "Use /payout or /payroll from Slack, toggling Private or Public. A second Safe owner signs, Zamance executes and DMs both sides." },
 ];

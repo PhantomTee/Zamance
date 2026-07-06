@@ -8,8 +8,9 @@
  * logic only has to happen once.
  *
  * Private (default): the amount is encrypted and moved via the shared ConfidentialUSDCWrapper's
- * confidentialTransfer, drawing down the Safe's already-wrapped confidential balance (see
- * /fund-treasury) - fully encrypted on-chain, nothing about the amount is ever public.
+ * confidentialTransfer, drawing down the Safe's already-wrapped confidential balance (funded via
+ * the dashboard's "fund treasury" action, not Slack) - fully encrypted on-chain, nothing about the
+ * amount is ever public.
  * Public: a plain, transparent USDC.transfer() straight from the Safe - the amount is plaintext
  * calldata, same as any normal ERC20 transfer.
  */
