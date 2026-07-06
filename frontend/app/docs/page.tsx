@@ -60,8 +60,8 @@ export default function DocsPage() {
 
       <p className="mt-12 text-sm opacity-50">
         Full source, contract details, and deploy scripts:{" "}
-        <a href="https://github.com/PhantomTee/Zamance" className="underline">
-          github.com/PhantomTee/Zamance
+        <a href="https://github.com/PhantomTee/DeLog" className="underline">
+          github.com/PhantomTee/DeLog
         </a>
         .
       </p>

@@ -36,7 +36,7 @@ export default function SupportPage() {
 
       <div className="mt-8 flex flex-wrap gap-3">
         <a
-          href="https://github.com/PhantomTee/Zamance/issues"
+          href="https://github.com/PhantomTee/DeLog/issues"
           className="rounded-full px-5 py-2.5 text-sm font-semibold text-white"
           style={{ background: "#7342E2" }}
         >

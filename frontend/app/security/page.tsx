@@ -36,7 +36,7 @@ export default function SecurityPage() {
         The confidential-token contract was self-reviewed against a documented FHEVM audit
         checklist before deployment (
         <a
-          href="https://github.com/PhantomTee/Zamance/blob/master/contracts/SECURITY_REVIEW.md"
+          href="https://github.com/PhantomTee/DeLog/blob/master/contracts/SECURITY_REVIEW.md"
           className="underline"
         >
           full write-up
