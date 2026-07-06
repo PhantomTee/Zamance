@@ -7,6 +7,7 @@ import { AppShell } from "@/components/AppShell";
 import { SlackButton } from "@/components/SlackButton";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SLACK_LOGIN_URL } from "@/lib/config";
+import { Copy, Check } from "lucide-react";
 
 function short(addr: string | null): string {
   if (!addr) return "-";
@@ -21,6 +22,15 @@ export default function DashboardPage() {
   const [runs, setRuns] = useState<PayrollRunSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  function copyBotAddress() {
+    if (!team?.botSignerAddress) return;
+    navigator.clipboard.writeText(team.botSignerAddress).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   useEffect(() => {
     if (!token) return;
@@ -80,7 +90,31 @@ export default function DashboardPage() {
       {loading && <p className="mt-6 text-sm text-foreground/50">Loading...</p>}
 
       {team && (
-        <section className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="panel mt-8 rounded-2xl p-5">
+          <p className="text-xs uppercase tracking-widest text-foreground/50">
+            Zamance bot signer address
+          </p>
+          <p className="mt-2 text-sm text-foreground/70">
+            Add this address as a co-signing owner on your Safe (threshold 2-of-N or higher) before
+            running <code>/setup-treasury</code>.
+          </p>
+          <div className="mt-3 flex items-center gap-2">
+            <code className="flex-1 overflow-x-auto rounded-lg bg-muted/60 px-3 py-2 text-sm">
+              {team.botSignerAddress}
+            </code>
+            <button
+              onClick={copyBotAddress}
+              aria-label="Copy bot signer address"
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg border border-border hover:border-accent-soft"
+            >
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {team && (
+        <section className="mt-4 grid gap-4 sm:grid-cols-3">
           <Stat label="Treasury" value={team.treasuryConfigured ? "Configured" : "Not set up"} />
           <Stat label="Safe" value={short(team.safeAddress)} />
           <Stat label="Confidential wrapper" value={short(team.wrapperAddress)} />
