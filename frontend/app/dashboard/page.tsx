@@ -15,7 +15,6 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { SlackButton } from "@/components/SlackButton";
 import { StatusBadge } from "@/components/StatusBadge";
-import { SLACK_LOGIN_URL } from "@/lib/config";
 import { Copy, Check, Link2, ShieldCheck, Wallet, ArrowUpRight, Layers, Lock, Unlock, ExternalLink } from "lucide-react";
 
 function short(addr: string | null): string {
@@ -152,7 +151,7 @@ export default function DashboardPage() {
             included, only status and timestamps.
           </p>
           <div className="mt-8">
-            <SlackButton href={SLACK_LOGIN_URL} label="Sign in with Slack" />
+            <SlackButton href="/connecting" label="Sign in with Slack" />
           </div>
         </main>
       </AppShell>
@@ -413,12 +412,15 @@ function CopyableFullAddress({ value }: { value: string }) {
 
   return (
     <div className="mt-3 flex items-center gap-2">
-      <code
-        className="flex-1 overflow-x-auto rounded-lg bg-muted/60 px-3 py-2 text-sm"
+      <a
+        href={etherscanAddress(value)}
+        target="_blank"
+        rel="noreferrer"
+        className="flex-1 overflow-x-auto rounded-lg bg-muted/60 px-3 py-2 text-sm hover:underline"
         style={{ fontFamily: "var(--font-data)" }}
       >
         {value}
-      </code>
+      </a>
       <button
         onClick={copy}
         aria-label="Copy bot signer address"

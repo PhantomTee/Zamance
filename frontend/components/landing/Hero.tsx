@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { ArrowRightCircle } from "lucide-react";
 import { fadeUp } from "@/lib/motion";
-import { SLACK_LOGIN_URL } from "@/lib/config";
 import { useSession } from "@/lib/useSession";
 import { RotatingHeadline } from "./RotatingHeadline";
 
@@ -55,7 +54,7 @@ export function Hero() {
         </motion.p>
 
         <motion.a
-          href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
+          href={isSignedIn ? "/dashboard" : "/connecting"}
           custom={2}
           variants={fadeUp}
           initial="hidden"

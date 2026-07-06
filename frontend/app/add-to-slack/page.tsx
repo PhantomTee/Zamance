@@ -1,6 +1,5 @@
 import { AppShell } from "@/components/AppShell";
 import { SlackButton } from "@/components/SlackButton";
-import { SLACK_LOGIN_URL } from "@/lib/config";
 
 const REQUIREMENTS = [
   "A workspace admin to approve the install the first time you sign in (Zamance requests commands, chat:write, im:write, users:read).",
@@ -21,7 +20,7 @@ export default function AddToSlackPage() {
       </p>
 
       <div className="mt-10 flex justify-center">
-        <SlackButton href={SLACK_LOGIN_URL} label="Sign in with Slack" />
+        <SlackButton href="/connecting" label="Sign in with Slack" />
       </div>
 
       <div className="panel mt-16 rounded-2xl p-6 text-left">

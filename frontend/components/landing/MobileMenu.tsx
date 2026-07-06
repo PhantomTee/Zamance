@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { NAV_LINKS } from "./navLinks";
-import { SLACK_LOGIN_URL } from "@/lib/config";
 
 export function MobileMenu({
   open,
@@ -79,7 +78,7 @@ export function MobileMenu({
 
             <div className="flex flex-col gap-3 px-6 pb-8">
               <a
-                href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
+                href={isSignedIn ? "/dashboard" : "/connecting"}
                 className="rounded-full py-3.5 text-center font-semibold text-white"
                 style={{ background: "#7342E2", fontSize: "0.95rem" }}
               >

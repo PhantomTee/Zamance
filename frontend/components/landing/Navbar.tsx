@@ -5,7 +5,6 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { MobileMenu } from "./MobileMenu";
 import { NAV_LINKS } from "./navLinks";
-import { SLACK_LOGIN_URL } from "@/lib/config";
 import { useSession } from "@/lib/useSession";
 
 export function Navbar() {
@@ -21,7 +20,7 @@ export function Navbar() {
             <Logo />
           </a>
 
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-10 md:flex">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.label}
@@ -36,7 +35,7 @@ export function Navbar() {
 
           <div className="hidden items-center gap-3 md:flex">
             <a
-              href={isSignedIn ? "/dashboard" : SLACK_LOGIN_URL}
+              href={isSignedIn ? "/dashboard" : "/connecting"}
               className="rounded-full px-5 py-2.5 text-sm font-semibold text-white transition hover:shadow-lg active:scale-95"
               style={{ background: "#7342E2" }}
             >

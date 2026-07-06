@@ -8,6 +8,10 @@ import { WRAPPER_ADDRESS, SEPOLIA_RPC_URL } from "@/lib/config";
 
 const WRAPPER_ABI = ["function confidentialBalanceOf(address account) view returns (bytes32)"];
 
+function etherscanAddress(address: string): string {
+  return `https://sepolia.etherscan.io/address/${address}`;
+}
+
 type Status = "idle" | "connecting" | "reading" | "signing" | "decrypting" | "done" | "error";
 
 /**
@@ -132,7 +136,14 @@ export default function BalancePage() {
           {address && (
             <div className="text-left">
               <p className="text-xs uppercase tracking-widest text-foreground/50">Connected wallet</p>
-              <p className="mt-1 font-mono text-sm">{address}</p>
+              <a
+                href={etherscanAddress(address)}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-1 block font-mono text-sm hover:underline"
+              >
+                {address}
+              </a>
 
               <div className="mt-6 border-t border-border pt-6">
                 {status === "reading" && <p className="text-sm text-foreground/60">Reading your encrypted balance handle...</p>}
