@@ -11,12 +11,6 @@
     },
     "slash_commands": [
       {
-        "command": "/register-wallet",
-        "description": "Register your Sepolia payout address",
-        "usage_hint": "0x...",
-        "should_escape": false
-      },
-      {
         "command": "/payout",
         "description": "Propose a single payout - toggle private/public in the modal",
         "should_escape": false
@@ -24,12 +18,6 @@
       {
         "command": "/payroll",
         "description": "Propose a batch payroll run - toggle private/public in the modal",
-        "should_escape": false
-      },
-      {
-        "command": "/payout-status",
-        "description": "Check a payout or payroll run's status",
-        "usage_hint": "<id>",
         "should_escape": false
       }
     ]

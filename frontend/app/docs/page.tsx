@@ -4,10 +4,8 @@ import { LandingPageShell } from "@/components/landing/LandingPageShell";
 export const metadata: Metadata = { title: "Docs - DeLog" };
 
 const COMMANDS = [
-  { cmd: "/register-wallet <address>", body: "Registers your Sepolia payout address. Everyone who sends or receives a payout runs this once, including Safe owners." },
   { cmd: "/payout", body: "Opens a modal to propose a single payout, with a Private/Public toggle (private by default)." },
   { cmd: "/payroll", body: "Opens a modal for a batch payroll run with the same toggle, bundled into one atomic Safe transaction." },
-  { cmd: "/payout-status <id>", body: "Ephemeral status lookup for a payout or payroll run." },
 ];
 
 const STEPS = [
@@ -15,7 +13,8 @@ const STEPS = [
   { title: "Create a Safe", body: "At app.safe.global - add DeLog's bot signer address (shown on the dashboard) as an owner, threshold >= 2-of-N." },
   { title: "Connect it", body: "Sign in to the dashboard and connect your Safe address there - admin only, nothing to deploy." },
   { title: "Get testnet USDC", body: "Send the Safe some real Sepolia USDC, e.g. from Circle's faucet." },
-  { title: "Shield and pay", body: "From the dashboard, shield part of it for private payouts. Then use /payout or /payroll in Slack - toggle Private or Public per run." },
+  { title: "Register your wallet", body: "On the dashboard, connect the wallet you want to send and receive payouts with - everyone who sends or receives a payout needs this, including Safe owners." },
+  { title: "Shield and pay", body: "From the dashboard, shield part of the Safe's USDC for private payouts. Then use /payout or /payroll in Slack - toggle Private or Public per run." },
 ];
 
 export default function DocsPage() {

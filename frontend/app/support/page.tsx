@@ -9,8 +9,8 @@ const FAQ = [
     a: "A workspace admin needs to sign in to the dashboard and connect a Safe address there - see the Docs page for the full onboarding flow.",
   },
   {
-    q: "\"This user has not run /register-wallet yet\"",
-    a: "Both the sender and recipient of a payout need a registered address. Ask the missing party to run /register-wallet <address>.",
+    q: "\"This user has not registered a payout wallet on the dashboard yet\"",
+    a: "Both the sender and recipient of a payout need a registered wallet. Ask the missing party to sign in to the dashboard and use \"Register your payout wallet.\"",
   },
   {
     q: "A payout is stuck on \"awaiting_signatures\"",

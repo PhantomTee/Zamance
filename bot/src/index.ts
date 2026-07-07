@@ -10,10 +10,8 @@ import "dotenv/config";
 import { App } from "@slack/bolt";
 import { prismaInstallationStore } from "./slack/installationStore";
 import { dashboardRoutes } from "./http/routes";
-import { handleRegisterWallet } from "./slack/commands/registerWallet";
 import { openPayoutModal, handlePayoutSubmission, PAYOUT_CALLBACK_ID } from "./slack/commands/payout";
 import { openPayrollModal, handlePayrollSubmission, PAYROLL_CALLBACK_ID } from "./slack/commands/payroll";
-import { handlePayoutStatus } from "./slack/commands/payoutStatus";
 import {
   handleNaturalLanguageMessage,
   handleNlPayoutConfirm,
@@ -52,10 +50,8 @@ const app = new App({
   customRoutes: dashboardRoutes,
 });
 
-app.command("/register-wallet", handleRegisterWallet);
 app.command("/payout", openPayoutModal);
 app.command("/payroll", openPayrollModal);
-app.command("/payout-status", handlePayoutStatus);
 
 app.view(PAYOUT_CALLBACK_ID, handlePayoutSubmission);
 app.view(PAYROLL_CALLBACK_ID, handlePayrollSubmission);

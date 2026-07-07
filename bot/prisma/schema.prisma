@@ -42,8 +42,9 @@ model Wallet {
   @@unique([teamId, slackUserId])
 }
 
-// A Wallet row (above) is just a self-reported "send my payouts here" address - anyone can type
-// any address into /register-wallet with zero proof they control it. That's fine for receiving
+// A Wallet row (above) is just a self-reported "send my payouts here" address - the dashboard's
+// wallet-registration flow reads it straight from a connected wallet, but nothing proves the
+// caller actually controls that key. That's fine for receiving
 // payouts, but it must NEVER be trusted to grant the "Safe owner" authorization the dashboard's
 // fund-treasury action checks - a Slack user could otherwise register a real owner's public
 // address as their own and pass that check without ever holding the key. VerifiedOwner is only

@@ -96,7 +96,7 @@ export async function handleNaturalLanguageMessage({
     if (!addr) {
       await client.chat.postMessage({
         channel: message.channel,
-        text: `<@${resolved.slackUserId}> hasn't run /register-wallet yet, so they can't receive a payout.`,
+        text: `<@${resolved.slackUserId}> hasn't registered a payout wallet on the dashboard yet, so they can't receive a payout.`,
       });
       return;
     }

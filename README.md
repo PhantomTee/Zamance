@@ -20,11 +20,12 @@ DeLog is multi-tenant: any Slack workspace can install it via OAuth
 ("Add to Slack"), and each installation is fully isolated - its own DB rows,
 its own treasury (just a Safe), its own dashboard login. DeLog does not
 (and cannot) deploy a Safe on a team's behalf; a team admin creates their own
-Safe and connects it from the **dashboard**, not Slack - treasury setup and
-funding are website actions (`POST /api/team/treasury`, `POST /api/team/fund`),
-kept off Slack entirely so Slack only ever handles the actual payout
-mechanics (`/payout`, `/payroll`, `/register-wallet`, `/payout-status`, and
-the natural-language DM flow). The USDC contract and the confidential
+Safe and connects it from the **dashboard**, not Slack. Treasury setup,
+funding, wallet registration, and payout status all live on the website
+(`POST /api/team/treasury`, `POST /api/team/fund`,
+`POST /api/team/register-wallet`, and the payout/payroll activity feed) -
+Slack is kept for the actual payout mechanics only (`/payout`, `/payroll`,
+and the natural-language DM flow). The USDC contract and the confidential
 wrapper are shared, protocol-level constants (`USDC_ADDRESS` /
 `WRAPPER_ADDRESS`) - not something each team deploys, since balances inside
 the wrapper are already isolated per-Safe-address.
@@ -50,16 +51,10 @@ features:
     display_name: delog
     always_online: true
   slash_commands:
-    - command: /register-wallet
-      description: Register your Sepolia payout address
-      usage_hint: "0x..."
     - command: /payout
       description: Propose a single payout (toggle private/public in the modal)
     - command: /payroll
       description: Propose a batch payroll run (toggle private/public in the modal)
-    - command: /payout-status
-      description: Check a payout or payroll run's status
-      usage_hint: "<id>"
 oauth_config:
   redirect_urls:
     - https://<your-bot-host>/slack/oauth_redirect
@@ -144,9 +139,9 @@ with Slack"), not as Slack commands - Slack is only for running payouts.
 5. Each Safe owner uses the dashboard's **Verify Safe ownership** to connect
    their wallet and sign a message proving they actually hold the key for an
    address that's a current Safe owner (no gas, no transaction - just a
-   signature). This is deliberately separate from `/register-wallet` (step 6):
-   registering a payout address is just "send my money here" and needs no
-   proof, but the funding action below grants a real capability, so it's
+   signature). This is deliberately separate from wallet registration (step
+   6): registering a payout address is just "send my money here" and needs
+   no proof, but the funding action below grants a real capability, so it's
    gated on a signature, not a self-reported claim.
 6. On the dashboard, use **Fund the confidential balance** (verified Safe
    owners only, from step 5) to shield part of that USDC into the Safe's
@@ -154,13 +149,15 @@ with Slack"), not as Slack commands - Slack is only for running payouts.
    Safe{Wallet}. Only needed if you plan to send private payouts - public
    payouts spend the Safe's plain USDC balance directly and need no wrapping
    step.
-7. Everyone who sends or receives payouts runs `/register-wallet 0x...` once
-   in Slack - including the Safe owners themselves (DeLog resolves Safe
-   owner addresses back to Slack IDs via this table to know who to DM for
-   signature-request notifications; it does not by itself grant the funding
-   capability - see step 5).
+7. Everyone who sends or receives payouts uses the dashboard's **Register
+   your payout wallet** once (connect wallet, no signature needed) -
+   including the Safe owners themselves (DeLog resolves Safe owner addresses
+   back to Slack IDs via this table to know who to DM for signature-request
+   notifications; it does not by itself grant the funding capability - see
+   step 5).
 8. From here on, payouts happen in Slack: `/payout`, `/payroll`, or DM the
-   bot in natural language ("pay Sarah 500").
+   bot in natural language ("pay Sarah 500"). Status and history for every
+   payout live on the dashboard's Activity feed.
 
 ## Verification (end-to-end on Sepolia)
 
@@ -187,11 +184,12 @@ with Slack"), not as Slack commands - Slack is only for running payouts.
    message states the correct visibility before you click Confirm.
 10. Sign in as a non-admin Slack member and confirm **Connect your Safe**
     rejects the request with a clear error.
-11. Have a non-owner run `/register-wallet` with a real Safe owner's address
-    (not their own), then try **Fund the confidential balance** without
-    verifying ownership - confirm it's rejected. Registering someone else's
-    address is not proof of controlling it; only **Verify Safe ownership**
-    (a signed message) grants the funding capability.
+11. Have a non-owner register a real Safe owner's address via **Register
+    your payout wallet** (not their own wallet), then try **Fund the
+    confidential balance** without verifying ownership - confirm it's
+    rejected. Registering someone else's address is not proof of controlling
+    it; only **Verify Safe ownership** (a signed message) grants the funding
+    capability.
 
 ## Security notes
 

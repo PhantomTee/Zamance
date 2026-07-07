@@ -18,7 +18,7 @@ export default function PrivacyPage() {
       <h2 className="mt-10 text-lg font-semibold">What we collect</h2>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-sm opacity-70">
         <li>Slack workspace (team) ID, workspace name, and bot access token, when a workspace installs DeLog.</li>
-        <li>Slack user IDs of anyone who runs /register-wallet, paired with the Ethereum address they registered.</li>
+        <li>Slack user IDs of anyone who registers a payout wallet on the dashboard, paired with the Ethereum address they registered.</li>
         <li>Payout and payroll metadata: requester, recipient, status, on-chain transaction hashes, and timestamps.</li>
         <li>The on-chain encrypted-amount handle (ciphertext reference) for each payout - never the amount itself.</li>
       </ul>

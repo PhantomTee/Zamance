@@ -102,10 +102,6 @@ export async function markPayoutFailed(payoutId: string) {
   return prisma.payout.update({ where: { id: payoutId }, data: { status: "failed" } });
 }
 
-export async function getPayout(teamId: string, id: string) {
-  return prisma.payout.findFirst({ where: { id, teamId }, include: { payrollRun: true } });
-}
-
 export async function listPayouts(teamId: string, limit = 50) {
   return prisma.payout.findMany({
     where: { teamId, payrollRunId: null },

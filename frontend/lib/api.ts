@@ -4,6 +4,7 @@ export interface Me {
   teamId: string;
   userId: string;
   teamName: string | null;
+  walletAddress: string | null;
 }
 
 export interface Team {
@@ -90,6 +91,8 @@ export const api = {
   team: (token: string) => get<Team>("/api/team", token),
   payouts: (token: string) => get<PayoutSummary[]>("/api/payouts", token),
   payrollRuns: (token: string) => get<PayrollRunSummary[]>("/api/payroll-runs", token),
+  registerWallet: (token: string, address: string) =>
+    post<{ walletAddress: string }>("/api/team/register-wallet", token, { address }),
   connectTreasury: (token: string, safeAddress: string) =>
     post<{ safeAddress: string }>("/api/team/treasury", token, { safeAddress }),
   fundTreasury: (token: string, amount: string) => post<{ safeTxHash: string }>("/api/team/fund", token, { amount }),

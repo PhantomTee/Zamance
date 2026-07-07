@@ -95,7 +95,7 @@ export async function handlePayoutSubmission({
   if (!recipientAddr) {
     await ack({
       response_action: "errors",
-      errors: { recipient: "This user has not run /register-wallet yet" },
+      errors: { recipient: "This user has not registered a payout wallet on the dashboard yet" },
     });
     return;
   }

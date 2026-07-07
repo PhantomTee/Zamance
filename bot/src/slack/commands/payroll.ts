@@ -109,7 +109,7 @@ export async function handlePayrollSubmission({
     if (!addr) {
       await ack({
         response_action: "errors",
-        errors: { lines: `<@${line.slackUserId}> has not run /register-wallet yet` },
+        errors: { lines: `<@${line.slackUserId}> has not registered a payout wallet on the dashboard yet` },
       });
       return;
     }

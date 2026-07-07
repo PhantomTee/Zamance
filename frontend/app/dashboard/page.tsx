@@ -66,6 +66,9 @@ export default function DashboardPage() {
   const [verifyError, setVerifyError] = useState<string | null>(null);
   const [verifiedAddress, setVerifiedAddress] = useState<string | null>(null);
 
+  const [registeringWallet, setRegisteringWallet] = useState(false);
+  const [registerWalletError, setRegisterWalletError] = useState<string | null>(null);
+
   const loadDashboard = useCallback(() => {
     if (!token) return;
     setLoading(true);
@@ -122,6 +125,26 @@ export default function DashboardPage() {
       setVerifyError(err instanceof ApiError ? err.message : err instanceof Error ? err.message : "Could not verify ownership.");
     } finally {
       setVerifying(false);
+    }
+  }
+
+  async function registerMyWallet() {
+    if (!token) return;
+    setRegisteringWallet(true);
+    setRegisterWalletError(null);
+    try {
+      const eth = (window as unknown as { ethereum?: import("ethers").Eip1193Provider }).ethereum;
+      if (!eth) throw new Error("No wallet found - install MetaMask or another injected wallet.");
+      const provider = new BrowserProvider(eth);
+      const [address] = await provider.send("eth_requestAccounts", []);
+      const { walletAddress } = await api.registerWallet(token, address);
+      setMe((prev) => (prev ? { ...prev, walletAddress } : prev));
+    } catch (err) {
+      setRegisterWalletError(
+        err instanceof ApiError ? err.message : err instanceof Error ? err.message : "Could not register your wallet.",
+      );
+    } finally {
+      setRegisteringWallet(false);
     }
   }
 
@@ -231,6 +254,35 @@ export default function DashboardPage() {
               </p>
               <CopyableFullAddress value={team.botSignerAddress} />
             </div>
+          </div>
+        )}
+
+        {team && (
+          <div className="panel mt-6 rounded-2xl p-5 sm:p-6">
+            <ActionHeader icon={<Wallet size={16} />} title="Register your payout wallet" />
+            <p className="mt-2 text-sm text-foreground/70">
+              Connect the wallet you want to send and receive payouts with. Everyone who sends or
+              receives a payout needs this, including Safe owners - it&apos;s separate from the
+              signature-verified ownership proof below, since receiving a payout needs no proof of
+              key ownership.
+            </p>
+            {me?.walletAddress ? (
+              <p className="mt-3 text-sm text-foreground/70">
+                Registered:{" "}
+                <a href={etherscanAddress(me.walletAddress)} target="_blank" rel="noreferrer" className="underline" style={{ fontFamily: "var(--font-data)" }}>
+                  {short(me.walletAddress)}
+                </a>
+              </p>
+            ) : null}
+            <button
+              onClick={registerMyWallet}
+              disabled={registeringWallet}
+              className="mt-3 rounded-lg px-5 py-2 text-sm font-semibold text-white transition disabled:opacity-50"
+              style={{ background: "#7342E2" }}
+            >
+              {registeringWallet ? "Connecting..." : me?.walletAddress ? "Update wallet" : "Connect wallet and register"}
+            </button>
+            {registerWalletError && <p className="mt-2 text-sm text-red-600">{registerWalletError}</p>}
           </div>
         )}
 

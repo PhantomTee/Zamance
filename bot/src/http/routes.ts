@@ -23,6 +23,8 @@ import {
   setTeamTreasury,
   getVerifiedOwnerSlackIds,
   upsertVerifiedOwner,
+  registerWallet,
+  getWalletAddress,
   logAudit,
 } from "../db/repository";
 import { getBotSignerAddress, getSafeOwners, getSafeThreshold, buildApproveCall, buildWrapCall, proposeSafeTransaction } from "../chain/safe";
@@ -104,8 +106,16 @@ export const dashboardRoutes: CustomRoute[] = [
       if (req.method === "OPTIONS") return handlePreflight(res);
       const session = requireSession(req, res);
       if (!session) return;
-      const team = await getTeam(session.teamId);
-      sendJson(res, 200, { teamId: session.teamId, userId: session.userId, teamName: team?.name ?? null });
+      const [team, walletAddress] = await Promise.all([
+        getTeam(session.teamId),
+        getWalletAddress(session.teamId, session.userId),
+      ]);
+      sendJson(res, 200, {
+        teamId: session.teamId,
+        userId: session.userId,
+        teamName: team?.name ?? null,
+        walletAddress,
+      });
     },
   },
   {
@@ -127,6 +137,33 @@ export const dashboardRoutes: CustomRoute[] = [
         botSignerAddress: getBotSignerAddress(),
         treasuryConfigured: Boolean(team.safeAddress),
       });
+    },
+  },
+  {
+    path: "/api/team/register-wallet",
+    method: ["POST", "OPTIONS"],
+    handler: async (req, res) => {
+      if (req.method === "OPTIONS") return handlePreflight(res);
+      const session = requireSession(req, res);
+      if (!session) return;
+
+      let body: { address?: string };
+      try {
+        body = await readJsonBody(req);
+      } catch {
+        return sendJson(res, 400, { error: "Invalid request body." });
+      }
+
+      const address = body.address?.trim();
+      if (!address || !ethers.isAddress(address)) {
+        return sendJson(res, 400, { error: "address must be a valid Ethereum address." });
+      }
+
+      const checksummed = ethers.getAddress(address);
+      await registerWallet(session.teamId, session.userId, checksummed);
+      await logAudit(session.teamId, session.userId, "register_wallet", `slack=${session.userId} eth=${checksummed}`);
+
+      sendJson(res, 200, { walletAddress: checksummed });
     },
   },
   {
@@ -255,10 +292,10 @@ export const dashboardRoutes: CustomRoute[] = [
       const treasury = await requireTeamTreasury(session.teamId);
       if (!treasury) return sendJson(res, 400, { error: TREASURY_NOT_CONFIGURED_MESSAGE });
 
-      // Signature-verified owner check - NOT the self-reported /register-wallet table. Anyone
-      // could type a real owner's address into /register-wallet without controlling its key;
-      // this grants a real capability (proposing a Safe transaction), so it must be backed by a
-      // proven signature, not a claim. See POST /api/team/verify-owner.
+      // Signature-verified owner check - NOT the self-reported register-wallet table. Anyone
+      // could register a real owner's address via POST /api/team/register-wallet without
+      // controlling its key; this grants a real capability (proposing a Safe transaction), so
+      // it must be backed by a proven signature, not a claim. See POST /api/team/verify-owner.
       const owners = await getSafeOwners(treasury.safeAddress);
       const ownerSlackIds = await getVerifiedOwnerSlackIds(session.teamId, owners);
       if (!ownerSlackIds.includes(session.userId)) {
