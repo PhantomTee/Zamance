@@ -20,6 +20,7 @@ import {
   CANCEL_ACTION_ID,
 } from "./slack/nlPayout";
 import { startApprovalPoller } from "./workers/approvalPoller";
+import { startKeepAlivePing } from "./workers/keepAlive";
 
 // im:history is required to read the text of DMs sent to the bot (see nlPayout.ts). Existing
 // installs need to re-authorize once this ships - Slack requires reinstall on scope changes.
@@ -65,12 +66,15 @@ async function main() {
   console.log("[bot] DeLog running in Socket Mode; OAuth + dashboard API on port", process.env.PORT ?? 3001);
 
   const stopPoller = startApprovalPoller();
+  const stopKeepAlive = startKeepAlivePing();
   process.on("SIGTERM", () => {
     stopPoller();
+    stopKeepAlive();
     process.exit(0);
   });
   process.on("SIGINT", () => {
     stopPoller();
+    stopKeepAlive();
     process.exit(0);
   });
 }
