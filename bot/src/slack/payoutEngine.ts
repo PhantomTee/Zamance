@@ -69,15 +69,20 @@ export async function proposeSinglePayout(
   recipient: ResolvedRecipient,
   isPrivate = true,
 ): Promise<void> {
-  const payout = await createPendingPayout({
-    teamId,
-    requesterId,
-    recipientId: recipient.slackUserId,
-    recipientAddr: recipient.address,
-    isPrivate,
-  });
-
+  // The whole body - including the initial row creation - must stay inside this try, or a
+  // failure here becomes an unhandled rejection with zero feedback: no Slack DM, no error
+  // anywhere the requester can see, just a payout that silently never happened.
+  let payoutId: string | undefined;
   try {
+    const payout = await createPendingPayout({
+      teamId,
+      requesterId,
+      recipientId: recipient.slackUserId,
+      recipientAddr: recipient.address,
+      isPrivate,
+    });
+    payoutId = payout.id;
+
     const { call, amountHandle } = await buildPayoutCall(treasury, recipient, isPrivate);
     const { safeTxHash } = await proposeSafeTransaction(treasury.safeAddress, [call]);
 
@@ -93,11 +98,11 @@ export async function proposeSinglePayout(
       `A ${visibility} payout to <@${recipient.slackUserId}> is awaiting your signature. Open Safe{Wallet} and sign tx ${safeTxHash}. (Details are intentionally not posted here or in any channel.)`,
     );
   } catch (err) {
-    await markPayoutFailed(payout.id);
+    if (payoutId) await markPayoutFailed(payoutId);
     await dmUser(
       client,
       requesterId,
-      `Payout ${payout.id} failed to propose: ${err instanceof Error ? err.message : String(err)}`,
+      `Payout${payoutId ? ` ${payoutId}` : ""} failed to propose: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 }
@@ -110,21 +115,26 @@ export async function proposeBatchPayroll(
   recipients: ResolvedRecipient[],
   isPrivate = true,
 ): Promise<void> {
-  const run = await createPayrollRun(teamId, requesterId, isPrivate);
-  const pendingItems = [];
-  for (const item of recipients) {
-    const payout = await createPendingPayout({
-      teamId,
-      requesterId,
-      recipientId: item.slackUserId,
-      recipientAddr: item.address,
-      isPrivate,
-      payrollRunId: run.id,
-    });
-    pendingItems.push({ payoutId: payout.id, recipient: item });
-  }
-
+  // The whole body - including the initial row creation - must stay inside this try, or a
+  // failure here becomes an unhandled rejection with zero feedback: no Slack DM, no error
+  // anywhere the requester can see, just a payroll run that silently never happened.
+  let runId: string | undefined;
   try {
+    const run = await createPayrollRun(teamId, requesterId, isPrivate);
+    runId = run.id;
+    const pendingItems = [];
+    for (const item of recipients) {
+      const payout = await createPendingPayout({
+        teamId,
+        requesterId,
+        recipientId: item.slackUserId,
+        recipientAddr: item.address,
+        isPrivate,
+        payrollRunId: run.id,
+      });
+      pendingItems.push({ payoutId: payout.id, recipient: item });
+    }
+
     const calls: MetaTransactionData[] = [];
     // Each item's encrypted amount handle must be persisted on its own Payout row (not just
     // the shared safeTxHash on the run) - otherwise a payroll payout's ciphertext handle is
@@ -157,12 +167,14 @@ export async function proposeBatchPayroll(
       `A ${visibility} payroll run of ${recipients.length} recipients is awaiting your signature. Open Safe{Wallet} and sign tx ${safeTxHash}.`,
     );
   } catch (err) {
-    await prisma.payrollRun.update({ where: { id: run.id }, data: { status: "failed" } });
-    await prisma.payout.updateMany({ where: { payrollRunId: run.id }, data: { status: "failed" } });
+    if (runId) {
+      await prisma.payrollRun.update({ where: { id: runId }, data: { status: "failed" } });
+      await prisma.payout.updateMany({ where: { payrollRunId: runId }, data: { status: "failed" } });
+    }
     await dmUser(
       client,
       requesterId,
-      `Payroll run ${run.id} failed to propose: ${err instanceof Error ? err.message : String(err)}`,
+      `Payroll run${runId ? ` ${runId}` : ""} failed to propose: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 }
